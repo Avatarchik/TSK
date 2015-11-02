@@ -22,7 +22,8 @@ public class ParametersUI : MonoBehaviour
         MaterialDropdown.options = new List<Dropdown.OptionData>();
         MaterialDropdown.options.Add(new Dropdown.OptionData("Ice"));
         MaterialDropdown.options.Add(new Dropdown.OptionData("Iron"));
-        MaterialDropdown.options.Add(new Dropdown.OptionData("Rocks"));
+        MaterialDropdown.options.Add(new Dropdown.OptionData("Cobalt"));
+        MaterialDropdown.options.Add(new Dropdown.OptionData("Diopside"));
         MaterialDropdown.value = 0;
         MaterialDropdown.GetComponentInChildren<Text>().text = MaterialDropdown.options[0].text;
 
@@ -46,7 +47,10 @@ public class ParametersUI : MonoBehaviour
                 Meteor.gameObject.AddComponent<Iron>();
                 break;
             case 2:
-                Meteor.gameObject.AddComponent<Rocks>();
+                Meteor.gameObject.AddComponent<Cobalt>();
+                break;
+            case 3:
+                Meteor.gameObject.AddComponent<Diopside>();
                 break;
             default:
                 Debug.Log("Nothing selected");

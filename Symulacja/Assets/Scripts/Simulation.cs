@@ -25,6 +25,7 @@ public class Simulation : MonoBehaviour
     public Meteor Meteor;
     public Atmosphere Atmosphere;
     public Earth Earth;
+    public CamerasManager CamerasManager;
     public float EarthRadius = 3185.5f; //3185.5
 
     void Awake()
@@ -45,7 +46,8 @@ public class Simulation : MonoBehaviour
         Meteor.transform.localScale *= Meteor.Radius / EarthRadius;
         Vector3 direction = Quaternion.Euler(Random.Range(0.01f, 90.0f), Random.Range(0.01f, 90.0f), Random.Range(0.01f, 90.0f)) * Vector3.right;
         Meteor.transform.position = Atmosphere.transform.localScale.x * direction * 0.5f;
-        Camera.main.GetComponent<CameraScript>().SetPosition();
+        CamerasManager.gameObject.SetActive(true);
+        CamerasManager.Init();
         Meteor.gameObject.SetActive(true);
     }
 }
