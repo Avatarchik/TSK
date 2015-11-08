@@ -28,6 +28,7 @@ public class CamerasManager : MonoBehaviour
             return toRet;
         });
         Cameras[_currentCamera].gameObject.SetActive(true);
+        Cameras[_currentCamera].gameObject.SendMessage("Init", SendMessageOptions.DontRequireReceiver);
         for(int i = 1; i < Cameras.Count; ++i)
         {
             Cameras[i].gameObject.SetActive(false);

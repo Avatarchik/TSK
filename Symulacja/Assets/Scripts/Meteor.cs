@@ -13,7 +13,7 @@ public class Meteor : MonoBehaviour
         get { return _radius; }
         set
         {
-            _radius = Mathf.Clamp(value, 0.01f, 100.0f);
+            _radius = Mathf.Clamp(value, 20.0f, 300.0f);
         }
     }
 
@@ -40,6 +40,8 @@ public class Meteor : MonoBehaviour
     void OnEnable()
     {
         _material = GetComponent<MeteorMaterial>();
+        Vector3 dir = Quaternion.Euler(0.0f, 0.0f, Angle) * Vector3.up;
+        _velocity = dir * InitialVelocity;
     }
 
     void OnDisable()
@@ -49,13 +51,15 @@ public class Meteor : MonoBehaviour
 
     void Update()
     {
-        Vector3 diff = transform.position - Simulation.Instance.Earth.transform.position;
-        diff.x = 0.0f;
-        diff.z = 0.0f;
-        diff.Normalize();
-        _velocity = Quaternion.Euler(0.0f, 0.0f, -_angle) * diff;
-        _velocity *= InitialVelocity;
+        transform.position += _velocity * Time.deltaTime;
+    }
 
-        transform.position -= _velocity * Time.deltaTime;
+    void OnTriggerEnter(Collider col)
+    {
+        if (col.gameObject.layer == LayerMask.NameToLayer("Earth"))
+        {
+            Debug.Log("Destroying meteor");
+            Destroy(gameObject);
+        }
     }
 }
