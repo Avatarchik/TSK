@@ -9,5 +9,6 @@ public class Cobalt : MeteorMaterial
         SpecificHeat = 4200.0f;
         HeatTransferCoefficient = 69.0f;
         EnthalpyOfVaporization = 6317066.19f;
+        Type = MaterialType.Cobalt;
     }
 }

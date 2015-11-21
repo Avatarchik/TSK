@@ -9,5 +9,6 @@ public class Diopside : MeteorMaterial
         SpecificHeat = 916.49f;
         HeatTransferCoefficient = 2.4f;
         EnthalpyOfVaporization = 4874246.36f;
+        Type = MaterialType.Diopside;
     }
 }

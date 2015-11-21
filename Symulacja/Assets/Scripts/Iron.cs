@@ -9,5 +9,6 @@ public class Iron : MeteorMaterial
         SpecificHeat = 4500.0f;
         HeatTransferCoefficient = 55.0f;
         EnthalpyOfVaporization = 6215668.28f;
+        Type = MaterialType.Iron;
     }
 }
