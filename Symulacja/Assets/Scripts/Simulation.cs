@@ -29,6 +29,12 @@ public class Simulation : MonoBehaviour
     public float Scale = 3185.5f;
     public float AirPressure = 1013.25f;
     public float GConst = 6.6740831e-11f;
+
+    public string MeteorVanishCause
+    {
+        get;
+        set;
+    }
     
     void Awake()
     {
@@ -43,10 +49,6 @@ public class Simulation : MonoBehaviour
     void OnEnable()
     {
         Scale = 6371 / Earth.transform.localScale.x;
-        //float meteorRadius = Meteor.Radius;
-        //meteorRadius -= 20.0f;
-        //meteorRadius /= 280.0f;
-        //Meteor.transform.localScale = Vector3.one * Mathf.Lerp(0.1f, 3.0f, meteorRadius);
         Meteor.transform.localScale = 0.01f * Meteor.Radius * Vector3.one;
         CamerasManager.gameObject.SetActive(true);
         CamerasManager.Init();
@@ -58,6 +60,11 @@ public class Simulation : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.R))
         {
             ReloadLevel();
+        }
+
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
         }
     }
 

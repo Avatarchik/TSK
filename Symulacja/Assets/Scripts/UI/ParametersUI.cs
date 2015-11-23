@@ -8,14 +8,15 @@ using System.Collections.Generic;
 public class ParametersUI : MonoBehaviour
 {
     public Meteor Meteor;
+    public GameObject SimulationUI;
 
     public Dropdown MaterialDropdown;
     public Slider RadiusSlider;
-    public InputField RadiusInputField;
-    public Slider InitialVelocitySlider;
-    public InputField InitialVelocityInputField;
+    public Text RadiusText;
+    public Slider VelocitySlider;
+    public Text VelocityText;
     public Slider AngleSlider;
-    public InputField AngleInputField;
+    public Text AngleText;
 
     void OnEnable()
     {
@@ -27,12 +28,16 @@ public class ParametersUI : MonoBehaviour
         MaterialDropdown.value = 0;
         MaterialDropdown.GetComponentInChildren<Text>().text = MaterialDropdown.options[0].text;
 
+        Meteor.Radius = 0.1f;
+        Meteor.InitialVelocity = 0.1f;
+        Meteor.Angle = 0.1f;
+
         RadiusSlider.value = Meteor.Radius;
-        RadiusInputField.text = Meteor.Radius.ToString();
-        InitialVelocitySlider.value = Meteor.InitialVelocity;
-        InitialVelocityInputField.text = Meteor.InitialVelocity.ToString();
+        RadiusText.text = RadiusSlider.value.ToString("0.000 m");
+        VelocitySlider.value = Meteor.InitialVelocity;
+        VelocityText.text = VelocitySlider.value.ToString("0.000 km/s");
         AngleSlider.value = Meteor.Angle;
-        AngleInputField.text = Meteor.Angle.ToString();
+        AngleText.text = AngleSlider.value.ToString("0.000 degrees");
     }
 
     public void StartSimulation()
@@ -57,8 +62,8 @@ public class ParametersUI : MonoBehaviour
                 break;
         }
 
-        //Camera.main.transform.parent = Simulation.Instance.Meteor.transform;
         Simulation.Instance.gameObject.SetActive(true);
+        SimulationUI.SetActive(true);
         gameObject.SetActive(false);
     }
 
@@ -66,53 +71,20 @@ public class ParametersUI : MonoBehaviour
     {
         Meteor.Radius = RadiusSlider.value;
         RadiusSlider.value = Meteor.Radius;
-        RadiusInputField.text = Meteor.Radius.ToString();
+        RadiusText.text = Meteor.Radius.ToString("0.000 m");
     }
 
-    public void RadiusInputFieldValueChange(string value)
+    public void VelocitySliderChange(float value)
     {
-        float val = 0.0f;
-        if(float.TryParse(RadiusInputField.text, out val))
-        {
-            Meteor.Radius = val;
-            RadiusSlider.value = Meteor.Radius;
-            RadiusInputField.text = Meteor.Radius.ToString();
-        }
-    }
-
-    public void InitialVelocitySliderChange(float value)
-    {
-        Meteor.InitialVelocity = InitialVelocitySlider.value;
-        InitialVelocitySlider.value = Meteor.InitialVelocity;
-        InitialVelocityInputField.text = Meteor.InitialVelocity.ToString();
-    }
-
-    public void InitialVelocityInputFieldValueChange(string value)
-    {
-        float val = 0.0f;
-        if (float.TryParse(InitialVelocityInputField.text, out val))
-        {
-            Meteor.InitialVelocity = val;
-            InitialVelocitySlider.value = Meteor.InitialVelocity;
-            InitialVelocityInputField.text = Meteor.InitialVelocity.ToString();
-        }
+        Meteor.InitialVelocity = VelocitySlider.value;
+        VelocitySlider.value = Meteor.InitialVelocity;
+        VelocityText.text = Meteor.InitialVelocity.ToString("0.000 km/s");
     }
 
     public void AngleSliderChange(float value)
     {
         Meteor.Angle = AngleSlider.value;
         AngleSlider.value = Meteor.Angle;
-        AngleInputField.text = Meteor.Angle.ToString();
-    }
-
-    public void AngleInputFieldValueChange(string value)
-    {
-        float val = 0.0f;
-        if (float.TryParse(AngleInputField.text, out val))
-        {
-            Meteor.Angle = val;
-            AngleSlider.value = Meteor.Angle;
-            AngleInputField.text = Meteor.Angle.ToString();
-        }
+        AngleText.text = Meteor.Angle.ToString("0.000 degrees");
     }
 }

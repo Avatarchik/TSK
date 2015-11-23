@@ -16,7 +16,7 @@ public class LookingAtCamera : CameraScript
         Vector3 newDir = Quaternion.Euler(0.0f, -30.0f, 0.0f) * dir;
         newDir *= distance;
         transform.position = Simulation.Instance.Meteor.transform.position + newDir;
-        transform.LookAt(Simulation.Instance.Meteor.transform);
+        //transform.LookAt(Simulation.Instance.Meteor.transform);
     }
 
     // Update is called once per frame
