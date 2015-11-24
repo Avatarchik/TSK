@@ -23,18 +23,18 @@ public class LookingAtCamera : CameraScript
     void Update ()
     {
 
-        if(Input.GetMouseButtonDown(1) && Input.mousePosition.x <= Screen.width * 0.5f)
+        if(Input.GetMouseButtonDown(1) && Input.mousePosition.x <= Screen.width * 0.38f)
         {
             _rmbDown = true;
             _mousePosition = Input.mousePosition;
         }
 
-        if(Input.GetMouseButtonUp(1) && Input.mousePosition.x <= Screen.width * 0.5f)
+        if(Input.GetMouseButtonUp(1) && Input.mousePosition.x <= Screen.width * 0.38f)
         {
             _rmbDown = false;
         }
 
-        if(_rmbDown && Input.mousePosition.x <= Screen.width * 0.5f)
+        if(_rmbDown && Input.mousePosition.x <= Screen.width * 0.38f)
         {
             if (Input.GetKeyDown(KeyCode.F) && Simulation.Instance.Meteor != null)
             {
@@ -46,7 +46,8 @@ public class LookingAtCamera : CameraScript
             float dy = currentMousePosition.y - _mousePosition.y;
             _mousePosition = currentMousePosition;
 
-            transform.Rotate(new Vector3(-dy, dx, 0.0f));
+            transform.Rotate(new Vector3(0.0f, dx, 0.0f), Space.World);
+            transform.Rotate(new Vector3(-dy, 0.0f, 0.0f), Space.Self);
 
             Vector3 movement = new Vector3(
                                           Input.GetAxis("Horizontal"),

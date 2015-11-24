@@ -61,11 +61,6 @@ public class Simulation : MonoBehaviour
         {
             ReloadLevel();
         }
-
-        if(Input.GetKeyDown(KeyCode.Escape))
-        {
-            Application.Quit();
-        }
     }
 
     public float CurrentTemperature(Vector3 meteorPosition)

@@ -8,6 +8,7 @@ public struct MeteorInfoStruct
     public float Velocity;
     public float Radius;
     public float Angle;
+    public float Mass;
 }
 
 public class Meteor : MonoBehaviour
@@ -117,55 +118,73 @@ public class Meteor : MonoBehaviour
             Destroy(gameObject);
         }
 
-        float prevMass = _material.Density * Mathf.PI * Radius * Radius;
+        float prevMass = _material.Density * 4.0f / 3.0f * Mathf.PI * Radius * Radius * Radius;
         float currentTemp = Simulation.Instance.CurrentTemperature(transform.position);
         float airDensity = Simulation.Instance.AirPressure / (currentTemp * 287.05f);
         float velocityValue = _velocity.magnitude;
         float crossSectionalArea = Mathf.PI * Radius * Radius;
-        float deltaMass = ((_material.HeatTransferCoefficient * airDensity * velocityValue * velocityValue * velocityValue * crossSectionalArea) / (2 * _material.EnthalpyOfVaporization)) * Time.deltaTime;
-        float currentMass = prevMass - deltaMass * 1e3f;
+        float deltaMass = ((_material.HeatTransferCoefficient * airDensity * velocityValue * velocityValue * velocityValue * 1e9f * crossSectionalArea) / (2 * _material.EnthalpyOfVaporization)) * Time.deltaTime;
+        float currentMass = prevMass - deltaMass;
         currentMass = Mathf.Clamp(currentMass, 0.0f, float.MaxValue);
 
-        Vector3 prevVelo = _velocity * 1000.0f;
+        Vector3 prevVelo = _velocity;
         float gconst = Simulation.Instance.GConst;
         float earthMass = Simulation.Instance.Earth.Mass;
         float distance = Vector3.Distance(transform.position, Simulation.Instance.Earth.transform.position) * 1000.0f;
         Vector3 meteorToEarth = Simulation.Instance.Earth.transform.position - transform.position;
         meteorToEarth.Normalize();
-        Vector3 deltaVelo = (gconst * earthMass / (distance * distance * Simulation.Instance.Scale) * meteorToEarth + 1/(2 * prevMass) * _cx * airDensity * velocityValue * velocityValue * crossSectionalArea * -_velocity.normalized) * Time.deltaTime;
-        Vector3 currentVelo = prevVelo + deltaVelo * 100.0f;
+        Vector3 deltaVelo = (gconst * earthMass / (distance * distance * Simulation.Instance.Scale) * meteorToEarth * 1e2f + 1/(2 * prevMass) * _cx * airDensity * velocityValue * velocityValue * 1e6f * crossSectionalArea * -_velocity.normalized) * Time.deltaTime;
+        Vector3 currentVelo = prevVelo + deltaVelo * 1e-3f;
 
         float le = -0.5f * 0.004f * velocityValue * velocityValue * velocityValue * (currentMass - prevMass);
+        le *= 1e9f;
+        float digitCount = (float)Math.Ceiling(Mathf.Log10(le));
+        float tmp = Mathf.Pow(10.0f, digitCount);
+        le /= tmp;
+        Color c = _particles.startColor;
+        c.a = le;
+        _particles.startColor = c;
 
-        _radius = Mathf.Sqrt(currentMass / (_material.Density * Mathf.PI));
-        _velocity = currentVelo * 0.001f;
+        _radius = Mathf.Pow((3.0f * currentMass) / (4.0f * Mathf.PI * _material.Density), 1.0f / 3.0f);
+        _velocity = currentVelo;
         _angle = Vector3.Angle(_velocity, Vector3.up);
         _particles.startSize = Mathf.Clamp(transform.localScale.x * 2.36f * 5.0f, 0.1f, float.MaxValue);
-        _particles.gameObject.transform.forward = -_velocity.normalized;
+
+        if (float.IsNaN(_velocity.x) || float.IsNaN(_velocity.y) || float.IsNaN(_velocity.z))
+        {
+            _velocity = Vector3.zero;
+        }
+        else
+        {
+            _particles.gameObject.transform.forward = -_velocity.normalized;
+        }
     }
 
     void FixedUpdate()
     {
-        if(_radius < 0.1f)
+        if(_radius < 0.01f)
         {
             Simulation.Instance.MeteorVanishCause = "Burned";
-            _points.Add(transform.position);
             Destroy(gameObject);
         }
         
         transform.localScale = 0.01f * _radius * Vector3.one;
 
-        if (Time.time - _lastTime > 0.3f)
+        if (Time.time - _lastTime > 0.1f)
         {
             _points.Add(transform.position);
             _lastTime = Time.time;
         }
 
-        transform.position += _velocity * Time.fixedDeltaTime;
+        if(!(float.IsNaN(_velocity.x) || float.IsNaN(_velocity.y) || float.IsNaN(_velocity.z)))
+        {
+            transform.position += _velocity * Time.fixedDeltaTime;
+        }
     }
 
     void OnDestroy()
     {
+        _points.Add(transform.position);
         LineLeft.SetVertexCount(_points.Count);
         for(int i = 0; i < _points.Count; ++i)
         {
@@ -180,7 +199,6 @@ public class Meteor : MonoBehaviour
             GameObject explosionInstance = (GameObject)Instantiate(Explosion, col.contacts[0].point, Quaternion.identity);
             explosionInstance.transform.localScale = transform.localScale * 42.7f;
             Simulation.Instance.MeteorVanishCause = "Earth hit";
-            _points.Add(transform.position);
             Destroy(gameObject);
         }
     }
@@ -196,6 +214,7 @@ public class Meteor : MonoBehaviour
         mis.Angle = _angle;
         mis.Radius = _radius;
         mis.Velocity = _velocity.magnitude;
+        mis.Mass = _material.Density * 4.0f / 3.0f * Mathf.PI * Radius * Radius * Radius;
 
         return mis;
     }

@@ -23,11 +23,16 @@ public class FollowingCamera : CameraScript
 
     public void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+
         if (Simulation.Instance.Meteor == null)
         {
             return;
         }
-        if (Input.GetMouseButton(1) && Input.mousePosition.x > Screen.width * 0.5f)
+        if (Input.GetMouseButton(1) && Input.mousePosition.x > Screen.width * 0.62f)
         {
             _offsetLength -= Input.mouseScrollDelta.y * 5.0f;
             _offsetLength = Mathf.Clamp(_offsetLength, 3.0f, float.MaxValue);
